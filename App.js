@@ -1,40 +1,64 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Animated, Easing, Button, TouchableHighlight } from 'react-native';
+import { 
+    StyleSheet, Text, View, Image, Animated, Easing, Button, TouchableWithoutFeedback 
+  } from 'react-native';
 
 export default class App extends React.Component {
   constructor() {
     super()
     this.RotateValueHolder = new Animated.Value(0);
     this.state = {
-      alwayBe: "You Should",
+      alwaysBe: "You Should",
+      isShould: true,
       isRotate: true,
+      spinSpeed: 1,
+      image: './img/batsym.png'
     }
   }
 
 StartImageRotateFunction() {
-  this.RotateValueHolder.setValue(0);
-
+    this.RotateValueHolder.setValue(0);
   Animated.timing(
     this.RotateValueHolder,
     {
       toValue: 1,
-      duration: 3000,
+      duration: 2000,
       easing: Easing.linear,
     }
   ).start(() => this.StartImageRotateFunction())
 }
 
-componentDidMount() {
-  this.StartImageRotateFunction();
-}
+spinner(e) {
+    console.log("I'm Batman");
+  if(this.state.spinSpeed === 1) {
+    this.StartImageRotateFunction();
+    this.setState({
+      spinSpeed: 1.1,
+      isRotate: true,
+    })
+   } 
+  else {
+    this.setState({
+      spinSpeed: 0,
+      isRotate: false,
+    })
+  }
+} // end spinner(e)
 
-  clickBat(e) {
-  e.preventDefault();
-  console.log("hello");
-  this.setState({
-     alwaysBe: "Always"
-  })
-}
+clickText(e) {
+    console.log("Always");
+  if (this.state.isShould) {
+    this.setState({
+      alwaysBe: "Always",
+      isShould: false,
+    })
+  } else {
+    this.setState({
+      alwaysBe: "You Should",
+      isShould: true,
+    })
+  }
+} //end clickText(e)
 
   render() {
     const rotateData = this.RotateValueHolder.interpolate({
@@ -45,23 +69,24 @@ componentDidMount() {
     return (
       <View style={styles.container}>
         <Text style={styles.baseText}>Always be Yourself..</Text>
-        <TouchableHighlight onPress={(e) => this.clickBat(e)}>
-          <Animated.Image
-             style={{ transform: [{ rotate: rotateData }],
-             width: 400, height: 400 }}
-             source={require('./img/batsym.png')}
-           />
-          </TouchableHighlight>
-          <Text style={styles.baseText}>Unless You can be</Text>
-          <Text style={styles.baseText}>Batman, then</Text>
-        <Text onPress={(e) => this.clickBat(e)}
-          style={styles.alwaysText}>{this.state.alwaysBe}
+          <TouchableWithoutFeedback onPress={(e) => this.spinner(e)}>
+            <Animated.Image
+              style={{ transform: [{ rotate: rotateData }],
+              width: 400, height: 400 }}
+              source={require('./img/batsym.png')}
+            />
+          </TouchableWithoutFeedback>
+        <Text style={styles.baseText}>Unless You can be</Text>
+        <Text style={styles.baseText}>Batman, then</Text>
+        <Text onPress={(e) => this.clickText(e)}
+            style={styles.alwaysText}>{this.state.alwaysBe}
         </Text>
         <Text style={styles.baseText}>be Batman!</Text>
       </View>
-    );
-  }
-}
+    ); //end return
+  } //end render
+
+} //end class
 
 const styles = StyleSheet.create({
   container: {
